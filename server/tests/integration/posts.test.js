@@ -33,7 +33,7 @@ beforeAll(async () => {
     title: 'Test Post',
     content: 'This is a test post content',
     author: userId,
-    category: mongoose.Types.ObjectId(),
+    category: 'tech',
     slug: 'test-post',
   });
   postId = post._id;
@@ -62,7 +62,7 @@ describe('POST /api/posts', () => {
     const newPost = {
       title: 'New Test Post',
       content: 'This is a new test post content',
-      category: mongoose.Types.ObjectId().toString(),
+      category: 'tech',
     };
 
     const res = await request(app)
@@ -81,7 +81,7 @@ describe('POST /api/posts', () => {
     const newPost = {
       title: 'Unauthorized Post',
       content: 'This should not be created',
-      category: mongoose.Types.ObjectId().toString(),
+      category: 'tech',
     };
 
     const res = await request(app)
@@ -95,7 +95,7 @@ describe('POST /api/posts', () => {
     const invalidPost = {
       // Missing title
       content: 'This post is missing a title',
-      category: mongoose.Types.ObjectId().toString(),
+      category: 'tech',
     };
 
     const res = await request(app)
@@ -118,24 +118,24 @@ describe('GET /api/posts', () => {
   });
 
   it('should filter posts by category', async () => {
-    const categoryId = mongoose.Types.ObjectId().toString();
+    const categoryValue = 'tech';
     
     // Create a post with specific category
     await Post.create({
       title: 'Filtered Post',
       content: 'This post should be filtered by category',
       author: userId,
-      category: categoryId,
+      category: 'tech',
       slug: 'filtered-post',
     });
 
     const res = await request(app)
-      .get(`/api/posts?category=${categoryId}`);
+      .get(`/api/posts?category=tech`);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBeTruthy();
     expect(res.body.length).toBeGreaterThan(0);
-    expect(res.body[0].category).toBe(categoryId);
+    expect(res.body[0].category).toBe('tech');
   });
 
   it('should paginate results', async () => {
@@ -146,7 +146,7 @@ describe('GET /api/posts', () => {
         title: `Pagination Post ${i}`,
         content: `Content for pagination test ${i}`,
         author: userId,
-        category: mongoose.Types.ObjectId(),
+        category: 'tech',
         slug: `pagination-post-${i}`,
       });
     }
@@ -177,7 +177,7 @@ describe('GET /api/posts/:id', () => {
   });
 
   it('should return 404 for non-existent post', async () => {
-    const nonExistentId = mongoose.Types.ObjectId();
+    const nonExistentId = new mongoose.Types.ObjectId();
     const res = await request(app)
       .get(`/api/posts/${nonExistentId}`);
 
